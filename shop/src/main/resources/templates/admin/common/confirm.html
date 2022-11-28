@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>작업 완료</title>
+</head>
+<body>
+  <p>
+    <span id="status" th:text="${formStatus?.description} ?: _">??</span> 했습니다.
+  </p>
+  <button id="backToPage" type="button" th:onclick="'location.replace(\'' + @{${redirectUrl}} + '\');'">돌아가기</button>
+</body>
+</html>
+

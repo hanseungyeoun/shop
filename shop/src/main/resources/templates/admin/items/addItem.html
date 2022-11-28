@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet"
+        th:href="@{/AdminLTE/plugins/fontawesome-free/css/all.min.css}"
+        href="../../AdminLTE/plugins/fontawesome-free/css/all.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet"
+        th:href="@{/AdminLTE/dist/css/adminlte.min.css}"
+        href="../../AdminLTE/dist/css/adminlte.min.css">
+  <style>
+    .card-outline-disable {
+      box-shadow: none;
+    }
+
+    .bgc {
+      background-color: rgba(0,0,0,.03);
+    }
+
+    .field-error {
+      border-color: #dc3545;
+      color: #dc3545;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button > i {
+      pointer-events: none;
+    }
+
+    .option-table td{
+        text-align: center;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <div th:replace="~{admin/fragments/fragment :: navibar}"></div>
+
+   <!-- Main Sidebar Container -->
+  <div th:replace="~{admin/fragments/fragment :: main-sidebar ('items' ,'items_add')}"></div>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">상품 관리</h1>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card bg-light card-outline-disable">
+              <div class="card-header bgc border-0">
+                <div class="row justify-content-between">
+                  <span class="card-text align-self-center">
+                    <i class="fas fa-home"></i>
+                    <span>상품 등록 > 상품 관리 > 상품 등록</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- search form -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card bg-light card-outline">
+              <div class="card-header bgc border-0">
+                <h3 class="card-title">상품 정보</h3>
+              </div>
+              <!-- /.card-header -->
+              <form class="item_form" th:action th:object="${item}" method="post" enctype="multipart/form-data">
+               <div class="card-body p-0">
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <td style="width:20%">
+                        판매여부
+                      </td>
+                      <td>
+                        <div th:each="type : ${salesStatusTypes}" class="form-check form-check-inline">
+                          <input type="radio" th:field="*{itemSalesStatus}" th:value="${type.name()}"
+                                 th:disabled = "${formStatus?.name eq 'CREATE'}" class="form-check-input" th:errorclass="is-invalid">
+                          <label th:for="${#ids.prev('itemSalesStatus')}" th:text="${type.description}"
+                                 class="form-check-label">
+                            판매여부
+                          </label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        진열여부
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <div th:each="type : ${displayStatusTypes}" class="form-check form-check-inline">
+                            <input type="radio" th:field="*{itemDisplayStatus}" th:value="${type.name()}"
+                                   th:disabled = "${formStatus?.name eq 'CREATE'}" th:errorclass="is-invalid"
+                                   class="form-check-input">
+                            <label th:for="${#ids.prev('itemDisplayStatus')}" th:text="${type.description}"
+                                   class="form-check-label">
+                              판매여부
+                            </label>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        카테고리
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <div class="row">
+                            <div class="col-lg-4">
+                              <select th:field="*{brandToken}" th:errorclass="is-invalid" class="form-control">
+                                <option value="">브랜드를 선택하세요</option>
+                                <option th:each="brand : ${brands}"
+                                        th:value="${brand.brandToken}"
+                                        th:text="${brand.brandName}">브랜드</option>
+                              </select>
+
+                              <div class="field-error" th:errors="*{brandToken}">
+                                브랜드 오류
+                              </div>
+                            </div>
+                            <div class="col-lg-4">
+                              <select th:field="*{primaryCategoryToken}" th:errorclass="is-invalid" class="form-control">
+                                <option value="">1차 카테고리를 선택하세요</option>
+                                <option th:each="category : ${primaryCategories}"
+                                        th:value="${category.categoryToken}"
+                                        th:text="${category.categoryName}">카테고리</option>
+                              </select>
+                              <div class="field-error" th:errors="*{primaryCategoryToken}">
+                                1차 카테고리 오류
+                              </div>
+                            </div>
+                            <div class="col-lg-4">
+                              <select th:field="*{secondaryCategoryToken}" th:errorclass="is-invalid" class="form-control">
+                                <option value="">2차 카테고리를 선택하세요</option>
+                                <option th:each="category : ${secondaryCategories}"
+                                        th:value="${category.categoryToken}"
+                                        th:text="${category.categoryName}">카테고리</option>
+                              </select>
+                              <div class="field-error" th:errors="*{secondaryCategoryToken}">
+                                2차 카테고리 오류
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        상품명
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <input type="text" id="itemName" th:field="*{itemName}" th:errorclass="is-invalid"
+                                 class="form-control" placeholder="상품명 입력하세요">
+                          <div class="field-error" th:errors="*{itemName}">
+                            상품명 오류
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        판매가
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <input type="text" id="price" th:field="*{itemPrice}" th:errorclass="is-invalid"
+                                 class="form-control" placeholder="가격을 입력하세요">
+                          <div class="field-error" th:errors="*{itemPrice}">
+                            판매가 오류
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        이미지 등록
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <div class="custom-file">
+                            <input type="file" id="mainImageFile" th:field="*{mainImageFile}" class="custom-file-input"
+                              placeholder="메인 이미지 입력하세요">
+                            <label class="custom-file-label" for="mainImageFile">Choose file</label>
+                            <div class="field-error" th:errors="*{mainImageFile}">
+                              메인이미지 오류
+                            </div>
+                          </div>
+                          <div class="form-group mb-0">
+                            <div class="custom-file">
+                              <input type="file" multiple="multiple" id="imageFileList" th:field="*{imageFiles}"
+                                class="custom-file-input" placeholder="이미지 입력하세요">
+
+                              <label class="custom-file-label" for="imageFileList">Choose file</label>
+                              <div class="field-error" th:errors="*{mainImageFile}">
+                                메인이미지 오류
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        상품 상세 정보
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <textarea type="text" id="itemContent" th:field="*{itemContent}" class="form-control"></textarea>
+                          <div class="field-error" th:errors="*{imageFiles}">
+                            상품상세정보
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        옵션정보
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <table class="table table-bordered option-table">
+                            <thead>
+                              <tr>
+                                <th>옵션항목</th>
+                                <th>상품 옵션명</th>
+<!--
+                                <th>옵션 추가 가격</th>
+-->
+                                <th></th>
+                              </tr>
+                              </thead>
+                            <tbody>
+                              <tr th:if="!${item.optionGroups?.containsKey('size')} or
+                                  ${item.optionGroups.size.size.intValue() eq 0}" data-type="size">
+                                <th scope="row">사이즈</th>
+                                <td>
+                                  <select id="optionGroups[size]" name="optionGroups[size]" class="form-control">
+                                    <option value="">사이즈 옵션을 선택해 주세요</option>
+                                    <option th:each="option : ${options['size']}"
+                                            th:value="${option}"
+                                            th:text="${option}">사이즈</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <button class="w-40 btn btn-primary btn-lg add-row"
+                                          type="button"
+                                          data-button-type="size"
+                                          data-button-title="사이즈">
+                                    <i class="fas fa-plus"></i></button>
+                                </td>
+                              </tr>
+                              <tr th:if="!${item.optionGroups?.containsKey('color')} or ${item.optionGroups.color.size.intValue() eq 0}"
+                                  data-type="color">
+                                <th scope="row">색상</th>
+                                <td>
+                                  <select id="optionGroups[color]" name = "optionGroups[color]" class="form-control">
+                                    <option value="">색상 옵션을 선택해 주세요</option>
+                                    <option th:each="option : ${options['color']}"
+                                            th:value="${option}"
+                                            th:text="${option}">컬러</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <button class="w-40 btn btn-primary btn-lg add-row"
+                                          data-button-type="color"
+                                          data-button-title="컬러"
+                                          type="button"><i class="fas fa-plus"></i></button>
+                                </td>
+                              </tr>
+                              <tr th:unless="!${item.optionGroups?.containsKey('size')} or ${item.optionGroups.size.size.intValue() eq 0}"
+                                  th:each="size, sizeStat : ${item?.optionGroups?.size}"
+                                  data-type="size">
+                                <th scope="row">사이즈</th>
+                                <td>
+                                  <select id="optionGroups[size]" name="optionGroups[size]" class="form-control">
+                                    <option value="">사이즈 옵션을 선택해 주세요</option>
+                                    <option th:each="option : ${options['size']}"
+                                            th:value="${option}"
+                                            th:text="${option}"
+                                            th:selected="${size eq option}">사이즈</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <button th:if="${sizeStat ne null and  sizeStat?.index eq 0}"
+                                    class="w-40 btn btn-primary btn-lg add-row"
+                                    data-button-type="color"
+                                    data-button-title="컬러"
+                                    type="button"><i class="fas fa-plus"></i></button>
+                                  <button
+                                      th:unless="${sizeStat ne null and sizeStat?.index eq 0}"
+                                      class="w-40 btn btn-danger btn-lg ms-md-auto delete-row"
+                                      type="button"><i class="fas fa-times"></i></button>
+                                </td>
+                              </tr>
+                              <tr th:unless="!${item.optionGroups?.containsKey('color')} or ${item.optionGroups.color.size.intValue() eq 0}"
+                                  th:each="color, colorStat: ${item?.optionGroups?.color}"
+                                  data-type="color">
+                                <th scope="row">색상</th>
+                                <td>
+                                  <select id="optionGroups[color]" name = "optionGroups[color]" class="form-control">
+                                    <option value="">색상 옵션을 선택해 주세요</option>
+                                    <option th:each="option : ${options['color']}"
+                                            th:value="${option}"
+                                            th:text="${option}"
+                                            th:selected="${color eq option}">컬러</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <button th:if="${colorStat ne null and colorStat?.index eq 0}"
+                                          class="w-40 btn btn-primary btn-lg add-row"
+                                          data-button-type="color"
+                                          data-button-title="컬러"
+                                          type="button">추가</button>
+                                  <button th:unless="${colorStat ne null and colorStat?.index eq 0}"
+                                          class="w-40 btn btn-danger btn-lg ms-md-auto delete-row"
+                                          type="button"><i class="fas fa-times"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div class="field-error" th:errors="*{optionGroups}">
+                            옵션 오류
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+               </div>
+                <!-- /.card-body -->
+               <div class="card-footer mb-2">
+                <div class="row justify-content-center">
+                  <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary">&nbsp;등록&nbsp;</button>
+                    <button type="button" class="btn btn-secondary">취소</button>
+                  </div>
+                </div>
+               </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <h5>Title</h5>
+      <p>Sidebar content</p>
+    </div>
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <div th:replace="~{admin/fragments/fragment :: footer}"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- jQuery -->
+<script
+    th:src="@{/AdminLTE/plugins/jquery/jquery.min.js}"
+    src="../../AdminLTE/plugins/jquery/jquery.min.js"></script>
+
+<!-- custom-file -->
+<script
+    th:src="@{/AdminLTE/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"
+    src="./../AdminLTE/plugins/bs-custom-file-input/bs-custom-file-input.min.js">
+</script>
+
+<!-- Bootstrap 4 -->
+<script
+    th:src="@{/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js}"
+    src="../../AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script
+    th:src="@{/AdminLTE/dist/js/adminlte.min.js}"
+    src="../../AdminLTE/dist/js/adminlte.min.js"></script>
+
+<script type="text/javascript" src="/res/editor/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+
+<script th:inline="javascript">
+  ;(function () {
+    'use strict'
+
+    const get = (target) => {
+      return document.querySelector(target)
+    }
+
+    const getAll = (target) => {
+      return document.querySelectorAll(target)
+    }
+
+    const $form = get('.item_form')
+    const $optionTable= get(".option-table");
+    const $primaryCategory = get('#primaryCategoryToken')
+    const $secondaryCategory = get('#secondaryCategoryToken');
+    let oEditors = [];
+
+    const createOptionRow = (title, type, options) => {
+      const $tbody = get('.option-table > tbody');
+      const $trItem = document.createElement('tr')
+      let optionTags = options.map((option) =>
+          `<option value=${option}>${option}</option>`
+      ).join(" ")
+
+      $trItem.dataset.type = type
+      $trItem.innerHTML = `
+                  <th scope="row">${title}</th>
+                  <td>
+                    <select id="optionGroups[${type}]" name = "optionGroups[${type}]" class="form-control">
+                      <option value="">${title} 옵션을 선택해 주세요</option>
+                        ${optionTags}
+                    </select>
+                  </td>
+                  <td>
+                    <button class="w-40 btn btn-danger delete-row"
+                    type="button"><i class="fas fa-times"></i></button>
+                  </td>
+            `
+      $tbody.appendChild($trItem);
+    }
+
+    const deleteTable = (e) => {
+      console.log(e.target.classList)
+      if (!e.target.classList.contains("delete-row"))
+        return
+
+      const $tableItem = e.target.closest("tr")
+      $tableItem.remove();
+    }
+
+    const addOptionRow = (e) => {
+      console.log(e.target.classList)
+      if (!e.target.classList.contains("add-row"))
+        return
+
+      const selectType = e.target.dataset.buttonType;
+      const title = e.target.dataset.buttonTitle;
+      const $trs= getAll(".option-table tbody > tr");
+
+      fetch(`/admin/items/options`, {
+        method: 'get',
+      })
+          .then((response) => response.json())
+          .then(options => createOptionRow(title, selectType, options.data[selectType]))
+          .catch((error) => console.error(error.message))
+    }
+
+    const addChildCategoryOption = (child) => {
+      let index = $secondaryCategory.options.length;
+      while (index--) {
+        $secondaryCategory.removeChild($secondaryCategory.options[index])
+      }
+
+      $secondaryCategory.add(new Option("2차 카테고리를 선택하세요", "", true, true));
+
+      for (let category of child.data) {
+        const {categoryName, categoryToken} = category;
+        $secondaryCategory.add(new Option(categoryName, categoryToken, false, false));
+      }
+    }
+
+    const getChildCategory = (e) => {
+      if (e.target.value == '') return
+      const id = e.target.value
+
+      fetch(`/admin/categories/child?searchType=CATEGORY_TOKEN&searchValue=${id}`, {
+        method: 'get',
+      })
+          .then((response) => response.json())
+          .then(category => addChildCategoryOption(category))
+          .catch((error) => console.error(error.message))
+    }
+
+    const initEdit = () => {
+      nhn.husky.EZCreator.createInIFrame({
+        oAppRef: oEditors,
+        elPlaceHolder: "itemContent",
+        sSkinURI: "/res/editor/se2/SmartEditor2Skin.html",
+        fCreator: "createSEditor2"
+      });
+    }
+
+    const onsubmit = () => {
+      oEditors.getById["itemContent"].exec("UPDATE_CONTENTS_FIELD", []);
+    }
+
+    const init = () => {
+      $optionTable.addEventListener('click', addOptionRow)
+      $optionTable.addEventListener('click', deleteTable)
+      $primaryCategory.addEventListener('change', getChildCategory)
+      $form.addEventListener('submit', onsubmit)
+      bsCustomFileInput.init();
+      initEdit();
+    }
+
+    init();
+  })()
+</script>
+
+</script>
+</body>
+</html>

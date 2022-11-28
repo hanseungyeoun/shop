@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet"
+        th:href="@{/AdminLTE/plugins/fontawesome-free/css/all.min.css}"
+        href="../../AdminLTE/plugins/fontawesome-free/css/all.min.css">
+
+  <!-- Theme style -->
+  <link rel="stylesheet"
+        th:href="@{/AdminLTE/dist/css/adminlte.min.css}"
+        href="../../AdminLTE/dist/css/adminlte.min.css">
+
+  <style>
+      .card-outline-disable {
+          box-shadow: none;
+      }
+
+      .bgc {
+          background-color: rgba(0,0,0,.03);
+      }
+
+      button {
+          cursor: pointer;
+      }
+
+      button > i {
+          pointer-events: none;
+      }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <div th:replace="~{admin/fragments/fragment :: navibar}"></div>
+
+  <!-- Main Sidebar Container -->
+  <div th:replace="~{admin/fragments/fragment :: main-sidebar ('shopping' ,'categories_add')}"></div>
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">카테고리 관리</h1>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <!-- table header -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card bg-light card-outline-disable">
+              <div class="card-header bgc">
+                <div class="row justify-content-between">
+                  <span class="card-text align-self-center">
+                    <i class="fas fa-home"></i>
+                    <span>쇼핑몰 관리 > 카테고리 관리 >카테고리 등록</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12">
+            <form class="item_form" th:action th:object="${category}" method="post" enctype="multipart/form-data">
+              <div class="card bg-light card-outline">
+                <div class="card-header bgc border-0">
+                  <h3 class="card-title">상품 정보</h3>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                      <td style="width:20%">
+                        카테고리 타입
+                      </td>
+                      <td>
+                        <div th:each="level : ${categoryLevel}" class="form-check form-check-inline">
+                          <input type="radio" th:field="*{level}" th:value="${level.name()}"
+                                class="form-check-input" th:errorclass="is-invalid" th:readOnly = "${formStatus?.name eq 'UPDATE'}">
+                          <label th:for="${#ids.prev('level')}" th:text="${level.description}"
+                                class="form-check-label">
+                            판매여부
+                          </label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="primaryCategory" style="display: none">
+                      <td style="width:20%">
+                        1차 카테고리
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <select th:field="*{primaryCategoryToken}" th:errorclass="is-invalid"
+                                  class="form-control" th:readOnly = "${formStatus?.name eq 'UPDATE'}">
+                            <option value="">1차 카테고리를 선택하세요</option>
+                            <option th:each="category : ${primaryCategories}"
+                                    th:value="${category.categoryToken}"
+                                    th:text="${category.categoryName}">카테고리</option>
+                          </select>
+                          <div class="field-error" th:errors="*{primaryCategoryToken}">
+                            1차 카테고리 오류
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        카테고리 명
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <input type="text" id="itemName" th:field="*{categoryName}" th:errorclass="is-invalid"
+                                 class="form-control" placeholder="카테고리 명을 입력하세요">
+                          <div class="field-error" th:errors="*{categoryName}">
+                            상품명 오류
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:20%">
+                        카테고리 상세설명
+                      </td>
+                      <td>
+                        <div class="form-group mb-0">
+                          <input type="text" id="description" th:field="*{description}" th:errorclass="is-invalid"
+                                 class="form-control" placeholder="카테고리 명을 입력하세요">
+                          <div class="field-error" th:errors="*{description}">
+                            상세설명 오류
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                  </table>
+                </div>
+                <div class="card-footer mb-2">
+                  <div class="row justify-content-center">
+                    <div class="col-md-auto">
+                      <button type="submit" class="btn btn-primary">&nbsp;등록&nbsp;</button>
+                      <button type="button" class="btn btn-secondary">취소</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>        
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <div th:replace="~{admin/fragments/fragment :: footer}"></div>
+</div>
+<!-- REQUIRED SCRIPTS -->
+
+<script>
+  ;(function () {
+    'use strict'
+
+    const get = (target) => {
+      return document.querySelector(target)
+    }
+
+    const getAll = (target) => {
+      return document.querySelectorAll(target)
+    }
+
+    const $tr = get('.primaryCategory')
+    const levels = Array.from(getAll("input[type='radio']"))
+
+    const changeLevel = (e) => {
+      if (e.target.value == '') return
+      const value = e.target.value
+
+      if (value === "PRIMARY_CATEGORY"){
+        $tr.style.display = 'none'
+      } else {
+        $tr.style.display = 'table-row'
+      }
+    }
+
+    const init = () => {
+      levels.forEach((level, index) => {
+        level.addEventListener('change', changeLevel)
+      })
+    }
+
+    init();
+  })()
+</script>
+</script>
+
+<!-- jQuery -->
+<script
+    th:src="@{/AdminLTE/plugins/jquery/jquery.min.js}"
+    src="../../AdminLTE/plugins/jquery/jquery.min.js"></script>
+
+<!-- Bootstrap 4 -->
+<script
+    th:src="@{/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js}"
+    src="../../AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script
+    th:src="@{/AdminLTE/dist/js/adminlte.min.js}"
+    src="../../AdminLTE/dist/js/adminlte.min.js"></script>
+</body>
+</html>

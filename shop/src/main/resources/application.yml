@@ -1,0 +1,42 @@
+spring:
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+  datasource:
+    #    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;
+    url: jdbc:h2:tcp://localhost/~/shop
+    #    url: jdbc:mysql://database-2.corsolkjpala.ap-northeast-2.rds.amazonaws.com/project
+    username: sa
+    #    password: syhan85!
+    driver-class-name: org.h2.Driver
+  messages:
+    basename: messages,errors
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    com.example.shop: debug
+    com.example.shop.controller.admin: trace
+    org.springframework.security: DEBUG
+#    org.apache.coyote.http11: debug
+
+download:
+  defaultPath: D:\2021\
+
+jwt:
+  secret-key: fast-campus.simple_sns_2022_secret_key
+  token-expired-time-ms: 2592000000

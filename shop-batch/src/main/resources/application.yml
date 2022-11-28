@@ -1,0 +1,36 @@
+spring:
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+  datasource:
+    #    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;
+    url: jdbc:h2:tcp://localhost/~/shop
+    #    url: jdbc:mysql://database-2.corsolkjpala.ap-northeast-2.rds.amazonaws.com/project
+    username: sa
+    #    password: syhan85!
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.h2.Driver
+
+
+  batch:
+    jdbc:
+      names: ${job.name:NONE}
+      initialize-schema: always
+
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    com.example: debug
+
