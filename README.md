@@ -85,59 +85,59 @@ h2 콘솔 접속 후 dbc:h2:~/shop 입력
 
 - 상품 ERD
     
-    ![Untitled 1.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_1.png)
+    ![Untitled 1.png](image/Untitled_1.png)
     
 - 상품 도메인 다이어그램
     
-    ![Untitled](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled.png)
+    ![Untitled](image/Untitled.png)
     
 - 주문 ERD
     
-    ![Untitled 1.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_1%201.png)
+    ![Untitled 1.png](image/Untitled_1%201.png)
     
-    - 상품 도메인 다이어그램
-        
-        ![Untitled](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled%201.png)
-        
-    - PaymentProcessor 중심으로 함 클라스 다이어그램
-        
-        ![Untitled](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled%202.png)
-        
-    - 결제 처리는 유저가 선택한 결제 수단에 맞는 PaymentProcessor 가 처리하게끔 한다
-        - 시스템에서 제공하는 결제 수단은 1) 카드 2) 토스페이 3) 카카오페이 4) 네이버페
-        이 - 4가지이다
-        - 구체적인 구현으로 들어간다면 각 결제 수단마다 결제를 처리하는 parameter 와
-        flow 가 다 다르겠지만
-        - 도메인 로직에서는 이를 추상화하여 "해당 주문의 결제를 처리한다" 라는 서비스의
-        흐름을 한 눈에 파악할 수 있도록 해야 한다
-        - 세세한 구현은 Service 가 아니라 PaymentProcessor 클래
-        스에 위임하고, Service 도메인에서는 이를 활용하기 위한 Interface 를 선언
-        하고 사용한다
-        - -DIP 개념을 활용하여 도메인이 사용하는 Interface 의 실제 구현체를 주입 받
-        아 (Injection) 사용할 수 있도록 한다
-        - 이렇게 하면 하나의 Service 메서드를 읽기만해도 도메인의 흐름을 파악할 수
-        있고, 세부 구현은 새로운 구현체를 Injection 하여 쉽게 변경할 수 있다
-    - PaymentProcessor 는 주문의 결제를 처리하는 객체이고 아래와 같은 세부 구현
-    을 가진다
-        - PaymentValidator - 결제 과정에서의 validation check
-        PaymentApiCaller - 결제 수단에 맞는 ApiCaller 호출
-        - Spring 이 제공하는 DI 기능을 활용하여 각각의 인터페이스를 구현한 구현체
-        를 List 로 받아 활용한다
-        - PaymentValidator interface 의 경우 - 아래와 같은 메서드 시그니처를 선언
-        하고, 다양한 validation 요구사항을 커버하는 각각의 validation 구현체를 생
-        성하여 활용한다
-        
-        ```java
-        public interface PaymentValidator {
-        	void validate(Order order, OrderCommand.PaymentRequest paymentRequest);
-        }
-        ```
-        
-        - 주문 가격 체크 Validator
-        - 결제 수단 체크 Validator
-        - 주문 상태 체크 Validator 를 구현하였다.
-    - PaymentApiCaller interface 의 경우 - 아래와 같은 메서드 시그니처를 선언
-    하고, 다양한 결제수단 구현체를 생성하여 활용한다
+- 상품 도메인 다이어그램
+    
+    ![Untitled](image/Untitled%201.png)
+    
+- PaymentProcessor 중심으로 함 클라스 다이어그램
+    
+    ![Untitled](image/Untitled%202.png)
+    
+- 결제 처리는 유저가 선택한 결제 수단에 맞는 PaymentProcessor 가 처리하게끔 한다
+    - 시스템에서 제공하는 결제 수단은 1) 카드 2) 토스페이 3) 카카오페이 4) 네이버페
+    이 - 4가지이다
+    - 구체적인 구현으로 들어간다면 각 결제 수단마다 결제를 처리하는 parameter 와
+    flow 가 다 다르겠지만
+    - 도메인 로직에서는 이를 추상화하여 "해당 주문의 결제를 처리한다" 라는 서비스의
+    흐름을 한 눈에 파악할 수 있도록 해야 한다
+    - 세세한 구현은 Service 가 아니라 PaymentProcessor 클래
+    스에 위임하고, Service 도메인에서는 이를 활용하기 위한 Interface 를 선언
+    하고 사용한다
+    - -DIP 개념을 활용하여 도메인이 사용하는 Interface 의 실제 구현체를 주입 받
+    아 (Injection) 사용할 수 있도록 한다
+    - 이렇게 하면 하나의 Service 메서드를 읽기만해도 도메인의 흐름을 파악할 수
+    있고, 세부 구현은 새로운 구현체를 Injection 하여 쉽게 변경할 수 있다
+- PaymentProcessor 는 주문의 결제를 처리하는 객체이고 아래와 같은 세부 구현
+을 가진다
+    - PaymentValidator - 결제 과정에서의 validation check
+    PaymentApiCaller - 결제 수단에 맞는 ApiCaller 호출
+    - Spring 이 제공하는 DI 기능을 활용하여 각각의 인터페이스를 구현한 구현체
+    를 List 로 받아 활용한다
+    - PaymentValidator interface 의 경우 - 아래와 같은 메서드 시그니처를 선언
+    하고, 다양한 validation 요구사항을 커버하는 각각의 validation 구현체를 생
+    성하여 활용한다
+    
+    ```java
+    public interface PaymentValidator {
+      void validate(Order order, OrderCommand.PaymentRequest paymentRequest);
+    }
+    ```
+    
+    - 주문 가격 체크 Validator
+    - 결제 수단 체크 Validator
+    - 주문 상태 체크 Validator 를 구현하였다.
+- PaymentApiCaller interface 의 경우 - 아래와 같은 메서드 시그니처를 선언
+하고, 다양한 결제수단 구현체를 생성하여 활용한다
         
         ```java
         public interface PaymentApiCaller {
@@ -172,57 +172,57 @@ h2 콘솔 접속 후 dbc:h2:~/shop 입력
 - 어드민 > 회원가입
     
     
-    ![Untitled 2.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_2.png)
+    ![Untitled 2.png](image/Untitled_2.png)
     
 - 어드민 > 로그인
     
     
-    ![Untitled 3.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_3.png)
+    ![Untitled 3.png](image/Untitled_3.png)
     
 - 어드민 > 홈
     
     
-    ![Untitled 4.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_4.png)
+    ![Untitled 4.png](image/Untitled_4.png)
     
 - 어드민 > 상품 관리 >상품 리스트
     
     
-    ![Untitled 5.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_5.png)
+    ![Untitled 5.png](image/Untitled_5.png)
     
 - 어드민 > 상품 관리> 상품 등록
     
-    ![Untitled 6.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_6.png)
+    ![Untitled 6.png](image/Untitled_6.png)
     
 - 어드민 > 주문 관리 > 주문 조회
 
-![Untitled 7.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_7.png)
+  ![Untitled 7.png](image/Untitled_7.png)
 
 - 어드민 > 쇼핑몰 관리 > 브랜드 관리
     
     
-    ![Untitled 8.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_8.png)
+    ![Untitled 8.png](image/Untitled_8.png)
     
 - 어드민 > 쇼핑몰 관리 > 브랜드 등록
     
     
-    ![Untitled 9.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_9.png)
+    ![Untitled 9.png](image/Untitled_9.png)
     
 - 어드민 > 쇼핑몰 관리 > 카네고리 관리
     
     
-    ![Untitled 10.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_10.png)
+    ![Untitled 10.png](image/Untitled_10.png)
     
 - 어드민 > 쇼핑몰 관리 > 카테고리 등록
     
-    ![Untitled 11.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_11.png)
+    ![Untitled 11.png](image/Untitled_11.png)
     
 - 어드민 > 쇼핑몰 관리 > 옵션 리스트
     
-    ![Untitled 12.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_12.png)
+    ![Untitled 12.png](image/Untitled_12.png)
     
 - 어드민 > 쇼핑몰 관리 > 옵션 등록
     
-    ![Untitled 13.png](README%205d8c415a8bb6478885b2def9c0f4f786/Untitled_13.png)
+    ![Untitled 13.png](image/Untitled_13.png)
     
 
 ## 5. Api
