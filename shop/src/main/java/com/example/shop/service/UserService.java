@@ -6,6 +6,7 @@ import com.example.shop.common.exception.BaseException;
 import com.example.shop.common.exception.ErrorCode;
 import com.example.shop.domain.user.RoleType;
 import com.example.shop.domain.user.UserAccount;
+import com.example.shop.repositiory.user.UserCacheRepository;
 import com.example.shop.repositiory.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,8 @@ public class UserService {
     @Value("${jwt.token-expired-time-ms}")
     private Long expiredTimeMs;
 
+    private final UserCacheRepository redisRepository;
+
     @Transactional
     public User join(String username, String password, RoleType roleType) {
         userRepository.findByUsername(username).ifPresent(userAccount -> {
@@ -44,13 +47,20 @@ public class UserService {
     }
 
     public String login(String username, String password) {
-        User savedUser = userRepository.findByUsername(username).map(User::fromEntity)
-                .orElseThrow(() -> new BaseException(ErrorCode.USER_NOTFOUND));
+        User savedUser = loadUserByUsername(username);
+        redisRepository.setUser(savedUser);
 
         if (!encoder.matches(password, savedUser.getPassword())) {
             throw new BaseException(ErrorCode.INVALID_PASSWORD);
         }
 
         return JwtTokenUtils.generateAccessToken(username, secretKey, expiredTimeMs);
+    }
+
+    public User loadUserByUsername(String username) {
+        return redisRepository.getUser(username).orElseGet(
+                () -> userRepository.findByUsername(username).map(User::fromEntity).orElseThrow(
+                        () -> new BaseException(ErrorCode.USER_NOTFOUND))
+                );
     }
 }
